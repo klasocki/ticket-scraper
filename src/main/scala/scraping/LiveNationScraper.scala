@@ -2,6 +2,10 @@ package scraping
 
 import events.Event
 
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+
 class LiveNationScraper {
   def searchForEvents(name: String): List[Event] = {
     null
