@@ -17,12 +17,20 @@ class LiveNationScraper(val rootURL: String) {
     false
   }
 
-  def getEventList(pageNumber: Int = 1): List[(String, String)] = {
+  def getEventList(pageNumber: Int = 1): List[Event] = {
     val doc = browser.get(rootURL + "/event/allevents?page=" + pageNumber)
+
     val tmp = doc >> element(".allevents__eventlist")
-    val list = tmp >> elementList("li")
-    val listNames = list.map(_ >> (allText(".result-info__headliners"), allText(".result-card__actions")))
-    if(listNames.isEmpty) listNames
-    else listNames ++ getEventList(pageNumber + 1)
+    val list = tmp >> elementList(".allevents__eventlistitem")
+
+    val outpList = scala.collection.mutable.ListBuffer.empty[Event]
+
+    for (event <- list) {
+      outpList += new Event(event >> allText(".result-info__localizedname"), event >> allText(".result-info__venue")
+        , event >> allText(".event-date__date"), event >> allText(".result-card__actions"))
+    }
+
+    if (list.isEmpty) outpList.toList
+    else outpList.toList ++ getEventList(pageNumber + 1)
   }
 }
