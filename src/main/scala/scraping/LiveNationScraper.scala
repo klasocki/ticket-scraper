@@ -5,6 +5,8 @@ import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 
+import scala.annotation.tailrec
+
 
 class LiveNationScraper(val rootURL: String) {
   private val browser = JsoupBrowser()
@@ -17,20 +19,24 @@ class LiveNationScraper(val rootURL: String) {
     false
   }
 
-  def getEventList(pageNumber: Int = 1): List[Event] = {
-    val doc = browser.get(rootURL + "/event/allevents?page=" + pageNumber)
+  def getEventList: List[Event] = {
+    @tailrec
+    def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
+      val list = browser.get(rootURL + "/event/allevents?page=" + pageNumber) >>
+        element(".allevents__eventlist") >>
+        elementList(".allevents__eventlistitem")
+      val events = list.map(event => new Event(
+        event >> allText(".result-info__localizedname"),
+        event >> allText(".result-info__venue"),
+        event >> allText(".event-date__date"),
+        event >> allText(".result-card__actions"))
+      )
 
-    val tmp = doc >> element(".allevents__eventlist")
-    val list = tmp >> elementList(".allevents__eventlistitem")
-
-    val outpList = scala.collection.mutable.ListBuffer.empty[Event]
-
-    for (event <- list) {
-      outpList += new Event(event >> allText(".result-info__localizedname"), event >> allText(".result-info__venue")
-        , event >> allText(".event-date__date"), event >> allText(".result-card__actions"))
+      if (list.isEmpty) acc
+      else getEventsRec(pageNumber + 1, acc ++ events)
     }
 
-    if (list.isEmpty) outpList.toList
-    else outpList.toList ++ getEventList(pageNumber + 1)
+    val acc = List.empty[Event]
+    getEventsRec(1, acc)
   }
 }

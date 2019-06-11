@@ -4,10 +4,9 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
   def ticketsAvailable(): Boolean = {
     val t = tickets.trim()
     t.matches("(?i)Znajd[źz]\\s+bilety") || t.matches("(?i)Zobacz\\s+wi[ęe]cej")
-
   }
 
-  override def toString = {
-    "[Name]: " + name + " [Venue]: " + venue + " [Date]: " + date + " [Tickets?]: " + ticketsAvailable()
+  override def toString: String = {
+    "[Name]: " + name + " [Venue]: " + venue + " [Date]: " + date + " [Tickets?]: " + ticketsAvailable
   }
 }

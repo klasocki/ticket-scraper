@@ -4,7 +4,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     println("Live Nation ticket scraper")
     val scraper = new LiveNationScraper("https://www.livenation.pl")
-    for (elem <- scraper.getEventList()) {
+    for (elem <- scraper.getEventList) {
       println(elem)
     }
   }
