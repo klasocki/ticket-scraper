@@ -33,7 +33,6 @@ class LiveNationScraper(val rootURL: String) {
           elementList(".allevents__eventlistitem")
       } catch {
         case _: FileNotFoundException =>
-          println("File " + string + " not found!!!")
           List[Element]()
       }
     }
