@@ -10,6 +10,8 @@ import scalafx.Includes._
 import java.awt.Desktop
 import java.net.URI
 
+import scalafx.collections.ObservableBuffer
+
 import scala.collection.JavaConverters._
 
 object Main extends JFXApp {
@@ -43,7 +45,7 @@ object Main extends JFXApp {
       button.layoutX = offX + textFieldWidth
       button.layoutY = offYSearch
 
-      val list = new ListView(scraper.getEventList)
+      var list = new ListView(scraper.getEventList)
       list.layoutX = offX
       list.layoutY = offYList
       list.prefWidth = listWidth
@@ -62,8 +64,8 @@ object Main extends JFXApp {
       content = List(label, textField, button, list, observeButton, getLinkButton)
 
       button.onAction = handle {
-        val found = FXCollections.observableList(SearchEngine.searchForEvents(scraper.getEventList, textField.getText()).asJava)
-        list.items.setValue(found)
+        val found = SearchEngine.searchForEvents(scraper.getEventList, textField.getText())
+        list.items= ObservableBuffer (found)
       }
 
       observeButton.onAction = handle {
