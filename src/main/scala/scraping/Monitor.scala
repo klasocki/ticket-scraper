@@ -3,18 +3,14 @@ package scraping
 import events.Event
 import java.awt.Desktop
 import java.net.URI
+import scala.collection.concurrent.TrieMap
 
 import javax.sound.sampled.AudioSystem
 
-import scala.collection.mutable.ListBuffer
-
 class Monitor(private val scraper: LiveNationScraper) {
-  private val list = ListBuffer.empty[Event]
+  private val eventsMonitored = TrieMap[Event, Thread]()
 
   def startMonitoring(event: Event): Unit = {
-    list.synchronized {
-      list += event
-    }
     val thread = new Thread {
       override def run(): Unit = {
         while (!scraper.ticketsAvailable(event)) {
@@ -22,12 +18,16 @@ class Monitor(private val scraper: LiveNationScraper) {
           Thread.sleep(5000)
         }
         sendNotification(event)
-        list.synchronized {
-          list -= event
-        }
+        eventsMonitored.remove(event)
       }
     }
+    eventsMonitored.put(event, thread)
     thread.start()
+  }
+
+  def stopMonitoring(event: Event): Unit = eventsMonitored.remove(event) match {
+    case Some(thread: Thread) => thread.interrupt()
+    case None => ;
   }
 
   private def sendNotification(event: Event): Unit = {
@@ -41,7 +41,7 @@ class Monitor(private val scraper: LiveNationScraper) {
   }
 
   private def playSound(): Unit = {
-    val thread = new Thread(){
+    val thread = new Thread() {
       override def run(): Unit = {
         val audioStream = AudioSystem.getAudioInputStream(new java.io.File("data/sounds/AirHorn.wav"))
         val clip = AudioSystem.getClip
@@ -53,6 +53,6 @@ class Monitor(private val scraper: LiveNationScraper) {
     thread.start()
   }
 
-  def monitoredEvents(): List[Event] = list.toList
+  def monitoredEvents(): List[Event] = eventsMonitored.keys.toList
 
 }
