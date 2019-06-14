@@ -12,32 +12,30 @@ import scala.annotation.tailrec
 
 
 class LiveNationScraper(val rootURL: String) {
-   private val browser = JsoupBrowser()
+  private val browser = JsoupBrowser()
 
-  def searchForEvents(name: String): List[Event] = {
-    null
-  }
+  def searchForEvents(name: String): List[Event] = SearchEngine.searchForEvents(getEventList, name)
 
-  def ticketsAvailable(event: Event): Boolean = {
-    false
-  }
-
-  def getElementList(string: String): List[Element]={
-
-    if(string.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")){
-      val doc =  browser.get(string)  >> element(".allevents__eventlist") >>
-          elementList(".allevents__eventlistitem")
-      return doc
+  def ticketsAvailable(event: Event): Boolean =
+    getEventList.find(e => e.name == event.name) match {
+      case Some(ev) => ev.ticketsAvailable()
+      case None => false
     }
-    else{
-      try{
-        val doc = browser.parseFile(string +".html") >> element(".allevents__eventlist") >>
-           elementList(".allevents__eventlistitem")
-        return doc
-      }catch{
-        case noFile : FileNotFoundException =>  List[Element]()
-      }
 
+  private def getElementsFromFileOrURL(string: String): List[Element] = {
+    if (string.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
+      browser.get(string) >> element(".allevents__eventlist") >>
+        elementList(".allevents__eventlistitem")
+    }
+    else {
+      try {
+        browser.parseFile(string + ".html") >> element(".allevents__eventlist") >>
+          elementList(".allevents__eventlistitem")
+      } catch {
+        case _: FileNotFoundException =>
+          println("File " + string + " not found!!!")
+          List[Element]()
+      }
     }
 
   }
@@ -46,7 +44,7 @@ class LiveNationScraper(val rootURL: String) {
     @tailrec
     def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
 
-      val list = getElementList(rootURL  + pageNumber)
+      val list = getElementsFromFileOrURL(rootURL + pageNumber)
 
       val events = list.map(event => new Event(
         event >> allText(".result-info__localizedname"),
