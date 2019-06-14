@@ -7,6 +7,7 @@ object Main {
     val monitor = new Monitor(scraper)
     for (elem <- scraper.searchForEvents(" james")) {
       monitor.startMonitoring(elem)
+
     }
   }
 }

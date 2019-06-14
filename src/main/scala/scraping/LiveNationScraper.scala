@@ -34,6 +34,7 @@ class LiveNationScraper(val rootURL: String) {
       } catch {
         case _: FileNotFoundException =>
           List[Element]()
+
       }
     }
 
@@ -45,11 +46,14 @@ class LiveNationScraper(val rootURL: String) {
 
       val list = getElementsFromFileOrURL(rootURL + pageNumber)
 
+
       val events = list.map(event => new Event(
         event >> allText(".result-info__localizedname"),
         event >> allText(".result-info__venue"),
         event >> allText(".event-date__date"),
-        event >> allText(".result-card__actions"))
+        event >> allText(".result-card__actions"),
+        (event >> element("a")).attr("href"))
+
       )
 
       if (list.isEmpty) acc

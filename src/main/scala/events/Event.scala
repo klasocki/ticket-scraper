@@ -1,6 +1,6 @@
 package events
 
-class Event(val name: String, val venue: String, val date: String, val tickets: String) {
+class Event(val name: String, val venue: String, val date: String, val tickets: String, val url: String = "https://www.livenation.pl/") {
   def ticketsAvailable(): Boolean = {
     val t = tickets.trim()
     t.matches("(?i)Znajd[źz]\\s+bilety") || t.matches("(?i)Zobacz\\s+wi[ęe]cej")
@@ -25,5 +25,7 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
   override def hashCode(): Int = {
     val state = Seq(name, venue, date, tickets)
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+
+
   }
 }
