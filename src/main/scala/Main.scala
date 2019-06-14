@@ -8,6 +8,7 @@ object Main {
     for (elem <- scraper.searchForEvents(" james")) {
       monitor.startMonitoring(elem)
 
+
     }
   }
 }
