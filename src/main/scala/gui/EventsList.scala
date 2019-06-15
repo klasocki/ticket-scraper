@@ -11,4 +11,6 @@ class EventsList(private val itemsList: List[Event], private val offsetX: Double
   this.layoutX = offsetX
   this.layoutY = offsetY
 
+
+
 }

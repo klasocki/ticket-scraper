@@ -4,8 +4,8 @@ import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 import scalafx.stage.Stage
 
-class EventsAlert( alertType: AlertType, private val alertContentText: String,
-                  private val alertTitle: String, private val stage: Stage) extends Alert(alertType) {
+class EventsAlert(  private val alertContentText: String, private val alertTitle: String,
+                      private val stage: Stage, alertType: AlertType=AlertType.Error) extends Alert(alertType) {
 
 
   def getHeaderText: String = {

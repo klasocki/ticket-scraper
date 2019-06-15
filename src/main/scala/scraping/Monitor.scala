@@ -19,7 +19,8 @@ class Monitor(private val scraper: LiveNationScraper) {
           Thread.sleep(5000)
         }
         sendNotification(event)
-        eventsMonitored.remove(event)
+        //eventsMonitored.remove(event)
+        stopMonitoring(event)
       }
     }
     eventsMonitored.put(event, thread)
@@ -35,10 +36,8 @@ class Monitor(private val scraper: LiveNationScraper) {
   private def sendNotification(event: Event): Unit = {
     println("Tickets for " + event.name + " available!!!")
     playSound()
-    val keyword = event.name.replaceAll("\\s+", "%20")
-    val page = "https://www.livenation.pl/search?keyword=" + keyword
     if (Desktop.isDesktopSupported && Desktop.getDesktop.isSupported(Desktop.Action.BROWSE)) {
-      Desktop.getDesktop.browse(new URI(page))
+      Desktop.getDesktop.browse(new URI(event.getUrl))
     }
   }
 
