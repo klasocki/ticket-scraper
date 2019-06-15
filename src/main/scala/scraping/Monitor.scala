@@ -1,14 +1,17 @@
 package scraping
 
-import events.Event
+import events.{Event, TicketsAvailableObserver}
 import java.awt.Desktop
 import java.net.URI
-import scala.collection.concurrent.TrieMap
 
+import scala.collection.concurrent.TrieMap
 import javax.sound.sampled.AudioSystem
+
+import scala.collection.mutable.ListBuffer
 
 class Monitor(private val scraper: LiveNationScraper) {
   private val eventsMonitored = TrieMap[Event, Thread]()
+  private val observers = ListBuffer.empty[TicketsAvailableObserver]
 
   def startMonitoring(event: Event): Boolean = {
     if (eventsMonitored.contains(event) || event.ticketsAvailable) return false
@@ -33,13 +36,17 @@ class Monitor(private val scraper: LiveNationScraper) {
     case None => ;
   }
 
+  def addObserver(observer: TicketsAvailableObserver): Unit = observers += observer
+
   private def sendNotification(event: Event): Unit = {
     println("Tickets for " + event.name + " available!!!")
     playSound()
     if (Desktop.isDesktopSupported && Desktop.getDesktop.isSupported(Desktop.Action.BROWSE)) {
       Desktop.getDesktop.browse(new URI(event.getUrl))
     }
+    observers.foreach(o => o.newTicketsAvailable(event))
   }
+
 
   private def playSound(): Unit = {
     val thread = new Thread() {
