@@ -10,7 +10,8 @@ import javax.sound.sampled.AudioSystem
 class Monitor(private val scraper: LiveNationScraper) {
   private val eventsMonitored = TrieMap[Event, Thread]()
 
-  def startMonitoring(event: Event): Unit = {
+  def startMonitoring(event: Event): Boolean = {
+    if (eventsMonitored.contains(event)) return false
     val thread = new Thread {
       override def run(): Unit = {
         while (!scraper.ticketsAvailable(event)) {
@@ -23,6 +24,7 @@ class Monitor(private val scraper: LiveNationScraper) {
     }
     eventsMonitored.put(event, thread)
     thread.start()
+    true
   }
 
   def stopMonitoring(event: Event): Unit = eventsMonitored.remove(event) match {

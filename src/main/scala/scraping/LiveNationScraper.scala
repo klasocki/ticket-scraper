@@ -22,6 +22,27 @@ class LiveNationScraper(val rootURL: String) {
       case None => false
     }
 
+
+  def getEventList: List[Event] = {
+    @tailrec
+    def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
+
+      val list = getElementsFromFileOrURL(rootURL + pageNumber)
+      val events = list.map(event => new Event(
+        event >> allText(".result-info__localizedname"),
+        event >> allText(".result-info__venue"),
+        event >> allText(".event-date__date"),
+        event >> allText(".result-card__actions"),
+        (event >> element("a")).attr("href"))
+      )
+      if (list.isEmpty) acc
+      else getEventsRec(pageNumber + 1, acc ++ events)
+    }
+
+    val acc = List.empty[Event]
+    getEventsRec(1, acc)
+  }
+
   private def getElementsFromFileOrURL(string: String): List[Element] = {
     if (string.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
       browser.get(string) >> element(".allevents__eventlist") >>
@@ -36,30 +57,5 @@ class LiveNationScraper(val rootURL: String) {
           List[Element]()
       }
     }
-
-  }
-
-  def getEventList: List[Event] = {
-    @tailrec
-    def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
-
-      val list = getElementsFromFileOrURL(rootURL + pageNumber)
-
-
-      val events = list.map(event => new Event(
-        event >> allText(".result-info__localizedname"),
-        event >> allText(".result-info__venue"),
-        event >> allText(".event-date__date"),
-        event >> allText(".result-card__actions"),
-        (event >> element("a")).attr("href"))
-
-      )
-
-      if (list.isEmpty) acc
-      else getEventsRec(pageNumber + 1, acc ++ events)
-    }
-
-    val acc = List.empty[Event]
-    getEventsRec(1, acc)
   }
 }
