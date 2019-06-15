@@ -46,7 +46,6 @@ class LiveNationScraper(val rootURL: String) {
       val list = getElementsFromFileOrURL(rootURL + pageNumber)
 
 
-
       val events = list.map(event => new Event(
         event >> allText(".result-info__localizedname"),
         event >> allText(".result-info__venue"),

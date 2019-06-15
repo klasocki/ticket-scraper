@@ -1,18 +1,14 @@
-
-
 import scalafx.application
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
-import scalafx.scene.control.{Button, Label, ListView, TextField}
+import scalafx.scene.control.{Alert, Button, Label, ListView, TextField}
 import scraping.{LiveNationScraper, Monitor, SearchEngine}
 import scalafx.Includes._
 import java.awt.Desktop
 import java.net.URI
-
 import events.Event
+import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.Alert.AlertType
-
-
 
 object Main extends JFXApp {
 

@@ -25,7 +25,7 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
   }
 
   override def hashCode(): Int = {
-    val state = Seq(name, venue, date, tickets,url)
+    val state = Seq(name, venue, date, tickets, url)
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
 
 
