@@ -11,6 +11,7 @@ class EventsList(private val itemsList: List[Event], private val offsetX: Double
   this.layoutX = offsetX
   this.layoutY = offsetY
 
-
-
+  def add(event: Event): Boolean = items.getValue.add(event)
+  def getSelected: Event = selectionModel.apply.getSelectedItem
+  def remove(event: Event) = items.getValue.remove(event)
 }

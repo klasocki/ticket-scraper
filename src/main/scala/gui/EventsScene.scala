@@ -54,15 +54,12 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
       if (selectedEvent == null) {
         new EventsAlert("You must select event to monitor!",
           "Not selected", stage).showAndWait()
-      } else if (selectedEvent.ticketsAvailable()) {
-        new EventsAlert("Cannot monitor event which has avalaible tickets!",
-          "Cannot monitor", stage).showAndWait()
       } else if (!monitor.startMonitoring(selectedEvent)) {
-        new EventsAlert("This event is already being monitored!",
-          "Already monitoring!", stage).showAndWait()
+        new EventsAlert("This event is already monitored, or has tickets available",
+          "Monitoring not possible", stage).showAndWait()
       } else {
         println("Monitoring  event: " + selectedEvent.name)
-        monitoredEventList.items.getValue.add(selectedEvent)
+        monitoredEvents.add(selectedEvent)
       }
     }
 
@@ -79,7 +76,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     }
 
     stopMonitorButton.onAction = handle {
-      val selectedEvent = monitoredEventList.selectionModel.apply.getSelectedItem
+      val selectedEvent = monitoredEvents.getSelected
       if (selectedEvent == null) {
         println("Nothing selected!")
         new EventsAlert("You must select event to stop from monitored events list!",
@@ -87,8 +84,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
       } else {
         monitor.stopMonitoring(selectedEvent)
         println("Stopping monitoring event:" + selectedEvent.name)
-        monitoredEventList.items.getValue.remove(selectedEvent)
-
+        monitoredEvents.remove(selectedEvent)
       }
     }
   }
@@ -118,9 +114,9 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
 
   val list = new EventsList(scraper.getEventList, offX, offYList)
 
-  val monitoredEventList = new EventsList(List[Event](), 2 * offX + listWidth, offYList)
+  val monitoredEvents = new EventsList(List[Event](), 2 * offX + listWidth, offYList)
 
-  content.addAll(monitoredEventList, textField, list)
+  content.addAll(monitoredEvents, textField, list)
 
 
 }

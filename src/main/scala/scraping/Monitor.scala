@@ -11,7 +11,7 @@ class Monitor(private val scraper: LiveNationScraper) {
   private val eventsMonitored = TrieMap[Event, Thread]()
 
   def startMonitoring(event: Event): Boolean = {
-    if (eventsMonitored.contains(event)) return false
+    if (eventsMonitored.contains(event) || event.ticketsAvailable) return false
     val thread = new Thread {
       override def run(): Unit = {
         while (!scraper.ticketsAvailable(event)) {
