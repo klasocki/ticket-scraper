@@ -1,6 +1,9 @@
 package gui
 
+import javafx.stage.WindowEvent
 import scalafx.application
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.ButtonType
 import scraping.{LiveNationScraper, Monitor}
 
 class MainStage(private val stageTitle: String, private val scraper: LiveNationScraper,
@@ -11,5 +14,27 @@ class MainStage(private val stageTitle: String, private val scraper: LiveNationS
 
   title = stageTitle
   scene = new EventsScene(sceneSize * 2 - offX, sceneSize, this, scraper, monitor)
+
+  onCloseRequest = (ev: WindowEvent) => {
+    if (monitor.monitoredEvents().nonEmpty) {
+      val alert = new EventsAlert("You are monitoring events, you really want to exit?",
+        "Exit Confirmation", MainStage.this, AlertType.Confirmation)
+
+      val result = alert.showAndWait()
+
+      result match {
+        case Some(ButtonType.OK) => {
+          close()
+          System.exit(0)
+        }
+        case _ => {
+          ev.consume()
+        }
+      }
+    } else {
+      close()
+      System.exit(0)
+    }
+  }
 
 }
