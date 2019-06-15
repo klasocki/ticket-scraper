@@ -10,6 +10,7 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
     "[Name]: " + name + " [Venue]: " + venue + " [Date]: " + date + " [Tickets?]: " + ticketsAvailable
   }
 
+
   def canEqual(other: Any): Boolean = other.isInstanceOf[Event]
 
   override def equals(other: Any): Boolean = other match {
@@ -29,6 +30,7 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
 
 
   }
+
   def getUrl(): String = {
     url match {
       case "https://www.livenation.pl/" => url

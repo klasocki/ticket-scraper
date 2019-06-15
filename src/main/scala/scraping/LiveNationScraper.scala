@@ -34,7 +34,6 @@ class LiveNationScraper(val rootURL: String) {
       } catch {
         case _: FileNotFoundException =>
           List[Element]()
-
       }
     }
 
@@ -45,6 +44,7 @@ class LiveNationScraper(val rootURL: String) {
     def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
 
       val list = getElementsFromFileOrURL(rootURL + pageNumber)
+
 
 
       val events = list.map(event => new Event(

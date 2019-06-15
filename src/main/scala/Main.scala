@@ -1,16 +1,18 @@
-import scraping.{LiveNationScraper, Monitor}
+
+
 import scalafx.application
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
-import scalafx.scene.control.{Alert, Button, Label, ListView, TextField}
-import scraping.SearchEngine
+import scalafx.scene.control.{Button, Label, ListView, TextField}
+import scraping.{LiveNationScraper, Monitor, SearchEngine}
 import scalafx.Includes._
 import java.awt.Desktop
 import java.net.URI
 
 import events.Event
-import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.Alert.AlertType
+
+
 
 object Main extends JFXApp {
 
@@ -30,6 +32,7 @@ object Main extends JFXApp {
   stage = new application.JFXApp.PrimaryStage {
     title = "Events monitor"
     scene = new Scene(sceneSize * 2 - offX, sceneSize) {
+
       val label = new Label("Search for concert:")
       label.layoutX = offX
       label.layoutY = offYTopLabel
@@ -45,6 +48,7 @@ object Main extends JFXApp {
       button.layoutY = offYSearch
 
       val list = new ListView(scraper.getEventList)
+
       list.layoutX = offX
       list.layoutY = offYList
       list.prefWidth = listWidth
@@ -64,6 +68,7 @@ object Main extends JFXApp {
       observeButton.layoutX = offX
       observeButton.layoutY = offYDown
       observeButton.prefWidth = buttonWidth
+
 
       val getLinkButton = new Button("Go to Web Page")
       getLinkButton.layoutX = 2 * offX + buttonWidth
@@ -138,6 +143,7 @@ object Main extends JFXApp {
 
         }
       }
+
     }
   }
 }
