@@ -6,7 +6,7 @@ import scala.math.min
 
 object SearchEngine {
   private def LevenshteinDist(a: String, b: String): Int =
-    ((0 to b.length).toList /: a)((prev, x) =>
+    ((0 to b.length).toList /: a) ((prev, x) =>
       (prev zip prev.tail zip b).scanLeft(prev.head + 1) {
         case (h, ((d, v), y)) => min(min(h + 1, v + 1), d + (if (x == y) 0 else 1))
       }) last
@@ -17,7 +17,7 @@ object SearchEngine {
     val minPrefixLen = 5
     val maxPrefixDist = b.length / 5
     val maxFullDist = b.length / 3
-    for (i <- minPrefixLen to a.length){
+    for (i <- minPrefixLen to a.length) {
       if (LevenshteinDist(a.take(i), b) < maxPrefixDist) return true
     }
     LevenshteinDist(a, b) < maxFullDist

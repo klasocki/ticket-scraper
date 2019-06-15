@@ -10,7 +10,8 @@ import javax.sound.sampled.AudioSystem
 class Monitor(private val scraper: LiveNationScraper) {
   private val eventsMonitored = TrieMap[Event, Thread]()
 
-  def startMonitoring(event: Event): Unit = {
+  def startMonitoring(event: Event): Boolean = {
+    if (eventsMonitored.contains(event) || event.ticketsAvailable) return false
     val thread = new Thread {
       override def run(): Unit = {
         while (!scraper.ticketsAvailable(event)) {
@@ -18,11 +19,13 @@ class Monitor(private val scraper: LiveNationScraper) {
           Thread.sleep(5000)
         }
         sendNotification(event)
-        eventsMonitored.remove(event)
+        //eventsMonitored.remove(event)
+        stopMonitoring(event)
       }
     }
     eventsMonitored.put(event, thread)
     thread.start()
+    true
   }
 
   def stopMonitoring(event: Event): Unit = eventsMonitored.remove(event) match {
@@ -33,10 +36,8 @@ class Monitor(private val scraper: LiveNationScraper) {
   private def sendNotification(event: Event): Unit = {
     println("Tickets for " + event.name + " available!!!")
     playSound()
-    val keyword = event.name.replaceAll("\\s+", "%20")
-    val page = "https://www.livenation.pl/search?keyword=" + keyword
     if (Desktop.isDesktopSupported && Desktop.getDesktop.isSupported(Desktop.Action.BROWSE)) {
-      Desktop.getDesktop.browse(new URI(page))
+      Desktop.getDesktop.browse(new URI(event.getUrl))
     }
   }
 
