@@ -1,0 +1,31 @@
+.label{
+    -fx-text-fill: #1c1b01;
+    -fx-font-family: "DejaVu Serif";
+    -fx-font-size: 16px;
+}
+
+.text-field{
+    -fx-font-size: 14px;
+    -fx-font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    -fx-text-fill: rgba(0, 0, 0, 0.73);
+}
+
+.button{
+    -fx-background-color: linear-gradient(to bottom right, #0e0e67, #320f58, #141b4c);
+    -fx-background-radius: 5;
+    -fx-text-fill: #ffdccc;
+    -fx-font-size: 15px;
+    -fx-padding: 2px;
+    -fx-border-insets: 0px 0px 0px 10px;
+    -fx-background-insets: 0px 0px 0px 10px;
+}
+
+.button:hover{
+    -fx-background-color: linear-gradient(to top right, #1f1f99, #6a1fa3, #3443a3);
+    -fx-text-fill: #ccbaaa;
+    -fx-cursor: hand;
+}
+
+.button-weblink:focused{
+    -fx-cursor: wait;
+}

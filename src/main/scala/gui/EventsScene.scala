@@ -16,6 +16,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
                   private val scraper: LiveNationScraper,
                   private val monitor: Monitor)
   extends Scene(sceneWidth, sceneHeight) with TicketsAvailableObserver {
+  stylesheets += getClass.getResource("raven.css").toExternalForm
 
   private val offYTopLabel = 20
   private val offYSearch = 50
@@ -59,6 +60,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     getLinkButton = new EventsButton("Go to Web Page", 2 * offX + buttonWidth, offYDown)
     stopMonitorButton = new EventsButton("Stop monitoring", 2 * offX + listWidth, offYDown)
 
+    getLinkButton.styleClass += "button-weblink"
     content.addAll(searchButton, resetButton, observeButton, getLinkButton, stopMonitorButton)
   }
 
