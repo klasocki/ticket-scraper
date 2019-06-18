@@ -7,7 +7,7 @@ class Event(val name: String, val venue: String, val date: String, val tickets: 
   }
 
   override def toString: String = {
-    "[Name]: " + name + " [Venue]: " + venue + " [Date]: " + date + " [Tickets?]: " + ticketsAvailable
+    List(name, venue, date, if(ticketsAvailable()) "Tickets available" else "No tickets").reduce(_ + " | " + _)
   }
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[Event]

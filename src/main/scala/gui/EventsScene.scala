@@ -77,13 +77,13 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     observeButton.onAction = handle {
       val selectedEvent = list.selectionModel.apply.getSelectedItem
       if (selectedEvent == null) {
-        new EventsAlert("You must select event to monitor!",
-        "Not selected", stage).showAndWait()
+        new EventsAlert("You must select an event",
+        "Event not selected", stage).showAndWait()
       } else if (!monitor.startMonitoring(selectedEvent)) {
-        new EventsAlert("This event is already monitored, or has tickets available",
-        "Monitoring not possible", stage).showAndWait()
+        new EventsAlert("Already monitoring or has tickets",
+        "Event already monitored or has tickets available", stage).showAndWait()
       } else {
-        println("Monitoring  event: " + selectedEvent.name)
+        println("Monitoring  event started: " + selectedEvent.name)
         monitoredEvents.add(selectedEvent)
       }
     }
@@ -91,8 +91,8 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     getLinkButton.onAction = handle {
       val selectedEvent = list.selectionModel.apply.getSelectedItem
       if (selectedEvent == null) {
-        new EventsAlert("You must select event to get its link from events list!",
-        "Not selected", stage).showAndWait()
+        new EventsAlert("You must select an event",
+        "Event not selected", stage).showAndWait()
       } else {
         println("Event's URL: " + selectedEvent.getUrl)
         if (Desktop.isDesktopSupported && Desktop.getDesktop.isSupported(Desktop.Action.BROWSE))
@@ -104,8 +104,8 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
       val selectedEvent = monitoredEvents.getSelected
       if (selectedEvent == null) {
         println("Nothing selected!")
-        new EventsAlert("You must select event to stop from monitored events list!",
-        "Not selected!", stage).showAndWait()
+        new EventsAlert("You must select an event",
+        "Event not selected", stage).showAndWait()
       } else {
         monitor.stopMonitoring(selectedEvent)
         println("Stopping monitoring event:" + selectedEvent.name)

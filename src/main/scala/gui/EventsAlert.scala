@@ -12,7 +12,7 @@ class EventsAlert(  private val alertContentText: String, private val alertTitle
     alertType match {
       case AlertType.Error => "Error!"
       case AlertType.Warning => "Warning!"
-      case AlertType.Confirmation => "Please confirm"
+      case AlertType.Confirmation => "Do you really want to exit?"
       case AlertType.Information => "Information"
     }
   }
@@ -21,5 +21,4 @@ class EventsAlert(  private val alertContentText: String, private val alertTitle
   title = alertTitle
   headerText = getHeaderText
   contentText = alertContentText
-
 }

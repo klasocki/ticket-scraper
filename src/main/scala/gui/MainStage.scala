@@ -17,8 +17,8 @@ class MainStage(private val stageTitle: String, private val scraper: LiveNationS
 
   onCloseRequest = (ev: WindowEvent) => {
     if (monitor.monitoredEvents().nonEmpty) {
-      val alert = new EventsAlert("You are monitoring events, you really want to exit?",
-        "Exit Confirmation", MainStage.this, AlertType.Confirmation)
+      val alert = new EventsAlert("Events will not be monitored",
+        "Data will be lost", MainStage.this, AlertType.Confirmation)
 
       val result = alert.showAndWait()
 
