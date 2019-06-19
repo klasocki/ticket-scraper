@@ -14,13 +14,14 @@ object SearchEngine {
   private def matches(string: String, pattern: String): Boolean = {
     val a = string.toLowerCase.trim
     val b = pattern.toLowerCase.trim
-    val minPrefixLen = 4
-    val maxPrefixDist: Int = b.length / 5
     val maxFullDist = b.length / 3
-    for (i <- minPrefixLen to a.length){
-      if (LevenshteinDist(a.take(i), b) <= maxPrefixDist) return true
-    }
-    LevenshteinDist(a, b) < maxFullDist
+    string.matches(pattern) || LevenshteinDist(a, b) < maxFullDist || anyPrefixMatches(a, b)
+  }
+
+  private def anyPrefixMatches(string: String, pattern: String): Boolean = {
+    val minPrefixLen = 4
+    val maxPrefixDist: Int = pattern.length / 5
+    (minPrefixLen to string.length).toList.exists(i => LevenshteinDist(string.take(i), pattern) <= maxPrefixDist)
   }
 
   def searchForEvents(events: List[Event], pattern: String): List[Event] =
