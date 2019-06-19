@@ -19,7 +19,15 @@ class Monitor(private val scraper: LiveNationScraper) {
       override def run(): Unit = {
         while (!scraper.ticketsAvailable(event)) {
           println(event.name + ": Still no tickets... ")
-          Thread.sleep(5000)
+          try{
+            Thread.sleep(5000)
+          }catch{
+            case _: InterruptedException => {
+              Thread.currentThread().interrupt()
+              return
+            }
+          }
+
         }
         sendNotification(event)
         //eventsMonitored.remove(event)
