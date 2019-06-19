@@ -14,6 +14,7 @@ import scala.annotation.tailrec
 class LiveNationScraper(val rootURL: String) {
   private val browser = JsoupBrowser()
 
+
   def searchForEvents(name: String): List[Event] = SearchEngine.searchForEvents(getEventList, name)
 
   def ticketsAvailable(event: Event): Boolean =

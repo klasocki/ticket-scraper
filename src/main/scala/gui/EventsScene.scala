@@ -5,6 +5,7 @@ import java.awt.Desktop
 
 import scalafx.Includes._
 import events.{Event, TicketsAvailableObserver}
+import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Scene
 import scalafx.scene.control.{Label, TextField}
@@ -27,33 +28,43 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
   private val buttonWidth = 150
   private val listWidth = 560
 
-  var searchButton: EventsButton = _
-  var resetButton: EventsButton = _
-  var observeButton: EventsButton = _
-  var getLinkButton: EventsButton = _
-  var stopMonitorButton: EventsButton = _
+  private var searchButton: EventsButton = _
+  private var resetButton: EventsButton = _
+  private var observeButton: EventsButton = _
+  private var getLinkButton: EventsButton = _
+  private var stopMonitorButton: EventsButton = _
+  private var list: EventsList = _
 
   prepareButtons()
   prepareLabels()
   addButtonsHandler()
   monitor.addObserver(this)
 
-  val textField = new TextField
+  try{
+    list = new EventsList(scraper.getEventList, offX, offYList)
+  } catch {
+    case _: java.net.UnknownHostException => {
+      new EventsAlert("Check your internet connection", "Cannot access host",
+        null).showAndWait()
+      Platform.exit()
+      System.exit(1)
+    }
+  }
+
+  private val monitoredEvents = new EventsList(List[Event](), 2 * offX + listWidth, offYList)
+
+  private val textField = new TextField
   textField.layoutX = offX
   textField.layoutY = offYSearch
   textField.promptText = "concert/star/band name"
   textField.prefWidth = textFieldWidth
-
-  val list = new EventsList(scraper.getEventList, offX, offYList)
-
-  val monitoredEvents = new EventsList(List[Event](), 2 * offX + listWidth, offYList)
 
   content.addAll(monitoredEvents, textField, list)
 
 
   override def newTicketsAvailable(event: Event): Unit = monitoredEvents.remove(event)
 
-  def prepareButtons(): Unit = {
+  private def prepareButtons(): Unit = {
     searchButton = new EventsButton("Search", offX + textFieldWidth, offYSearch)
     resetButton = new EventsButton("Show all", 2 * offX + textFieldWidth + buttonWidth, offYSearch)
     observeButton = new EventsButton("Monitor concert", offX, offYDown)
@@ -64,7 +75,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     content.addAll(searchButton, resetButton, observeButton, getLinkButton, stopMonitorButton)
   }
 
-  def addButtonsHandler(): Unit = {
+  private def addButtonsHandler(): Unit = {
 
     searchButton.onAction = handle {
       list.items = ObservableBuffer(scraper.searchForEvents(textField.getText()))
@@ -114,7 +125,7 @@ class EventsScene(private val sceneWidth: Double, private val sceneHeight: Doubl
     }
   }
 
-  def prepareLabels(): Unit = {
+  private def prepareLabels(): Unit = {
     val searchLabel = new Label("Search for concert:")
     searchLabel.layoutX = offX
     searchLabel.layoutY = offYTopLabel
