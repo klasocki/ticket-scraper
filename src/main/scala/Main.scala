@@ -3,9 +3,7 @@ import gui.MainStage
 import scraping.{LiveNationScraper, Monitor}
 
 object Main extends JFXApp {
-
- val scraper = new LiveNationScraper("src/test/mocks/page-to-monitor")
-  //val scraper = new LiveNationScraper()
+  val scraper: LiveNationScraper = if (parameters.unnamed.nonEmpty) new LiveNationScraper(parameters.unnamed.head)
+  else new LiveNationScraper()
   stage = new MainStage("Events monitor", scraper, new Monitor(scraper))
-
 }
