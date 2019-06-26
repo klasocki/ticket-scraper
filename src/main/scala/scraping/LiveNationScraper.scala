@@ -11,7 +11,7 @@ import net.ruippeixotog.scalascraper.model.Element
 import scala.annotation.tailrec
 
 
-class LiveNationScraper(val rootURL: String) {
+class LiveNationScraper(val rootURL: String = "https://www.livenation.pl/event/allevents?page=") {
   private val browser = JsoupBrowser()
 
 
@@ -25,38 +25,49 @@ class LiveNationScraper(val rootURL: String) {
 
 
   def getEventList: List[Event] = {
-    @tailrec
-    def getEventsRec(pageNumber: Int, acc: List[Event]): List[Event] = {
 
-      val list = getElementsFromFileOrURL(rootURL + pageNumber)
-      val events = list.map(event => new Event(
-        event >> allText(".result-info__localizedname"),
-        event >> allText(".result-info__venue"),
-        event >> allText(".event-date__date"),
-        event >> allText(".result-card__actions"),
-        (event >> element("a")).attr("href"))
-      )
-      if (list.isEmpty) acc
-      else getEventsRec(pageNumber + 1, acc ++ events)
+    var list: List[Element] = List[Element]()
+    if (rootURL.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
+      list = getElementsFromUrl()
+    } else {
+      list = getElementsFromFile()
     }
 
-    val acc = List.empty[Event]
+    list.map(event => new Event(
+      event >> allText(".result-info__localizedname"),
+      event >> allText(".result-info__venue"),
+      event >> allText(".event-date__date"),
+      event >> allText(".result-card__actions"),
+      (event >> element("a")).attr("href"))
+    )
+
+  }
+
+  private def getElementsFromUrl(): List[Element] = {
+
+    @tailrec
+    def getEventsRec(pageNumber: Int, acc: List[Element]): List[Element] = {
+
+      val list = browser.get(rootURL + pageNumber) >> element(".allevents__eventlist") >>
+        elementList(".allevents__eventlistitem")
+
+      if (list.isEmpty) acc
+      else getEventsRec(pageNumber + 1, acc ++ list)
+    }
+
+    val acc = List.empty[Element]
     getEventsRec(1, acc)
   }
 
-  private def getElementsFromFileOrURL(string: String): List[Element] = {
-    if (string.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
-      browser.get(string) >> element(".allevents__eventlist") >>
+  private def getElementsFromFile(): List[Element] = {
+
+    try {
+      browser.parseFile(rootURL + ".html") >> element(".allevents__eventlist") >>
         elementList(".allevents__eventlistitem")
-    }
-    else {
-      try {
-        browser.parseFile(string + ".html") >> element(".allevents__eventlist") >>
-          elementList(".allevents__eventlistitem")
-      } catch {
-        case _: FileNotFoundException =>
-          List[Element]()
-      }
+    } catch {
+      case _: FileNotFoundException =>
+        List[Element]()
     }
   }
+
 }
