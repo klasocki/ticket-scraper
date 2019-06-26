@@ -1,6 +1,19 @@
 package events
 
+/**
+  * Class representing an event
+  * @param name Official event name
+  * @param venue Venue of the event
+  * @param date Event's date
+  * @param tickets String scraped from html with ticket information in polish
+  * @param url Event's url
+  */
 class Event(val name: String, val venue: String, val date: String, val tickets: String, val url: String = "https://www.livenation.pl/") {
+  /**
+    * Checks if event tickets are available - assumes that they are if event has either
+    * "Znajdz bilety" (find tickets) or "Zobacz wiecej" (see more) as options
+    * @return True if tickets are available
+    */
   def ticketsAvailable(): Boolean = {
     val t = tickets.trim()
     t.matches("(?i)Znajd[źz]\\s+bilety") || t.matches("(?i)Zobacz\\s+wi[ęe]cej")

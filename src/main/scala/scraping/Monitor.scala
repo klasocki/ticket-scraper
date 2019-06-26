@@ -9,10 +9,20 @@ import javax.sound.sampled.AudioSystem
 
 import scala.collection.mutable.ListBuffer
 
+/**
+  * Class monitoring multiple events to check if new tickets become available
+  * @param scraper Sraper object, supplying the Monitor with possibility to check if tickets became available
+  */
 class Monitor(private val scraper: LiveNationScraper) {
   private val eventsMonitored = TrieMap[Event, Thread]()
   private val observers = ListBuffer.empty[TicketsAvailableObserver]
 
+  /**
+    * Starts new thread to monitor event - check if new tickets are available every 5 seconds.
+    * If tickets become available, event website is opened and sound notification is played
+    * @param event Event to monitor
+    * @return true if monitoring started successfully, false if event is already monitored or has tickets available
+    */
   def startMonitoring(event: Event): Boolean = {
     if (eventsMonitored.contains(event) || event.ticketsAvailable) return false
     val thread = new Thread {
@@ -27,7 +37,6 @@ class Monitor(private val scraper: LiveNationScraper) {
               return
             }
           }
-
         }
         sendNotification(event)
         //eventsMonitored.remove(event)
