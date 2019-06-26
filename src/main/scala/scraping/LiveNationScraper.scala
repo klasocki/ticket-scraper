@@ -1,7 +1,5 @@
 package scraping
 
-import java.io.FileNotFoundException
-
 import events.Event
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
@@ -28,9 +26,9 @@ class LiveNationScraper(val rootURL: String = "https://www.livenation.pl/event/a
 
     var list: List[Element] = List[Element]()
     if (rootURL.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
-      list = getElementsFromUrl()
+      list = getElementsFromUrl
     } else {
-      list = getElementsFromFile()
+      list = getElementsFromFile
     }
 
     list.map(event => new Event(
@@ -43,7 +41,7 @@ class LiveNationScraper(val rootURL: String = "https://www.livenation.pl/event/a
 
   }
 
-  private def getElementsFromUrl(): List[Element] = {
+  private def getElementsFromUrl: List[Element] = {
 
     @tailrec
     def getEventsRec(pageNumber: Int, acc: List[Element]): List[Element] = {
@@ -59,15 +57,8 @@ class LiveNationScraper(val rootURL: String = "https://www.livenation.pl/event/a
     getEventsRec(1, acc)
   }
 
-  private def getElementsFromFile(): List[Element] = {
-
-    try {
-      browser.parseFile(rootURL + ".html") >> element(".allevents__eventlist") >>
+  private def getElementsFromFile: List[Element] =
+     browser.parseFile(rootURL) >> element(".allevents__eventlist") >>
         elementList(".allevents__eventlistitem")
-    } catch {
-      case _: FileNotFoundException =>
-        List[Element]()
-    }
-  }
 
 }
